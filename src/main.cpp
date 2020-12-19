@@ -35,11 +35,12 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   for (int h = 0; h <= 10; h++) {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
       dispatch_cmd_t cmd;
       cmd.type = SCREEN_SHOW_HOME;
+      cmd.data = h * 10;
       xQueueSend(dispatchScreen.cmdq, &cmd, portMAX_DELAY);
-      vTaskDelay(1000/portTICK_PERIOD_MS);
+      vTaskDelay(100/portTICK_PERIOD_MS);
     }
     dispatch_cmd_t cmdb;
     cmdb.type = FAN_SET_PERCENT;
