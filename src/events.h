@@ -3,7 +3,7 @@
 
 
 typedef enum dispatch_evt_type {
-    TESTEVT,
+    GUST_EVT_BUTTON_SPEED_PRESSED,
 } dispatch_evt_type_t;
 
 typedef struct dispatch_evt {
