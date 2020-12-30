@@ -4,6 +4,7 @@
 
 typedef enum dispatch_evt_type {
     GUST_EVT_BUTTON_SPEED_PRESSED,
+    GUST_EVT_KNOB_CHANGED
 } dispatch_evt_type_t;
 
 typedef struct dispatch_evt {

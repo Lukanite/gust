@@ -22,7 +22,7 @@ void ledsTask(void * pvParameter) {
                 for (int i = 0; i < (255*4); i++) {
                     fill_rainbow(leds, NUM_LEDS, i%255, 255/NUM_LEDS);
                     FastLED.show();
-                    delay(1);
+                    vTaskDelay(1 / portTICK_PERIOD_MS);
                 }
             }
         }

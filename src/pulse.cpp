@@ -11,7 +11,9 @@ static void IRAM_ATTR pulseISR() {
 }
 
 void initializePulseCounter() {
-    pinMode(PULSE_GPIO, INPUT_PULLUP);
+    pinMode(PULSE_GPIO, INPUT); 
+    gpio_pulldown_dis(GPIO_NUM_25); //Disable pullups due to M5StickC limitation between G25/G36
+    gpio_pullup_dis(GPIO_NUM_25);
     attachInterrupt(PULSE_GPIO, pulseISR, RISING);
 }
 
