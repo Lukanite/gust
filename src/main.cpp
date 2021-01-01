@@ -11,6 +11,7 @@
 #include "pulse.h"
 #include "buttons.h"
 #include "knob.h"
+#include "ota.h"
 
 QueueHandle_t cevtQueue;
 
@@ -19,6 +20,7 @@ dispatch_pair_t dispatchFan;
 dispatch_pair_t dispatchLeds;
 dispatch_pair_t dispatchButtons;
 dispatch_pair_t dispatchKnob;
+dispatch_pair_t dispatchOta;
 
 int curpwr = 0;
 
@@ -36,12 +38,15 @@ void setup() {
   dispatchButtons.cmdq = xQueueCreate(20, sizeof(dispatch_cmd_t)); //Not used
   dispatchKnob.evtq = cevtQueue;
   dispatchKnob.cmdq = xQueueCreate(20, sizeof(dispatch_cmd_t)); //Not used
+  dispatchOta.evtq = cevtQueue;
+  dispatchOta.cmdq = xQueueCreate(20, sizeof(dispatch_cmd_t)); //Not used
 
   xTaskCreate(screenTask, "Screen", 4*1024, &dispatchScreen, 10, NULL);
-  xTaskCreatePinnedToCore(fanTask, "Fan PWM", 4*1024, &dispatchFan, 10, NULL, 1);
+  xTaskCreate(fanTask, "Fan PWM", 4*1024, &dispatchFan, 10, NULL);
   xTaskCreate(ledsTask, "LEDs", 4*1024, &dispatchLeds, 10, NULL);
   xTaskCreate(buttonTask, "Buttons", 4*1024, &dispatchButtons, 10, NULL);
-  xTaskCreatePinnedToCore(knobTask, "Knob", 4*1024, &dispatchKnob, 1, NULL, 0);
+  xTaskCreate(knobTask, "Knob", 4*1024, &dispatchKnob, 9, NULL);
+  xTaskCreate(otaTask, "OTA", 4*1024, &dispatchOta, 8, NULL);
 }
 
 void loop() {
@@ -65,6 +70,12 @@ void loop() {
         cmdb.type = FAN_SET_PERCENT;
         cmdb.data = curpwr;
         xQueueSend(dispatchFan.cmdq, &cmdb, portMAX_DELAY);
+      }
+      else if (curevt.type == GUST_EVT_WIFI_CONNECTED) {
+        dispatch_cmd_t cmdb;
+        cmdb.type = SCREEN_UPDATE_WIFI_IP;
+        cmdb.data = curevt.data;
+        xQueueSend(dispatchScreen.cmdq, &cmdb, portMAX_DELAY);
       }
     } 
     dispatch_cmd_t cmd;

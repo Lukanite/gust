@@ -17,8 +17,6 @@ static void IRAM_ATTR pcnt_intr_handler(void *arg) //Only called when limit is r
 }
 
 void initializePulseCounter() {
-
-    //Todo: Set interrupt on first count to set time of first pulse
     pcnt_config_t config = {};
     config.pulse_gpio_num = PULSE_GPIO;
     config.ctrl_gpio_num = PCNT_PIN_NOT_USED;

@@ -4,12 +4,13 @@
 
 typedef enum dispatch_evt_type {
     GUST_EVT_BUTTON_SPEED_PRESSED,
-    GUST_EVT_KNOB_CHANGED
+    GUST_EVT_KNOB_CHANGED,
+    GUST_EVT_WIFI_CONNECTED
 } dispatch_evt_type_t;
 
 typedef struct dispatch_evt {
     dispatch_evt_type_t type;
-    int data;
+    int32_t data;
     void * extdata;
 } dispatch_evt_t;
 
