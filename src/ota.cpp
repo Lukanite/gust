@@ -5,6 +5,7 @@
 #include <Update.h>
 
 #include "dispatch.h"
+#include "ota.h"
 
 //Wifi creds go into this file - see wifi_placeholder.h
 #include "config.h"
@@ -56,7 +57,6 @@ const char* serverIndex =
  * setup function
  */
 void otaTask(void * pvParameter) {
-    uint16_t lastRead = -1; //Set to max uint so first read will send an event
     dispatch_pair_t core = *((dispatch_pair_t *) pvParameter);
     // Connect to WiFi network
     WiFi.begin(GUST_WIFI_SSID, GUST_WIFI_PASS);
@@ -86,24 +86,30 @@ void otaTask(void * pvParameter) {
         server.sendHeader("Connection", "close");
         server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
         ESP.restart();
-    }, []() {
+    }, [&core]() {
         HTTPUpload& upload = server.upload();
         if (upload.status == UPLOAD_FILE_START) {
-        Serial.printf("Update: %s\n", upload.filename.c_str());
-        if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
-            Update.printError(Serial);
-        }
+            Serial.printf("Update: %s\n", upload.filename.c_str());
+            dispatch_evt_t outevt;
+            outevt.type = GUST_EVT_OTA_STARTED;
+            xQueueSend(core.evtq, &outevt, portMAX_DELAY);
+            if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
+                Update.printError(Serial);
+            }
         } else if (upload.status == UPLOAD_FILE_WRITE) {
-        /* flashing firmware to ESP*/
-        if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-            Update.printError(Serial);
-        }
+            /* flashing firmware to ESP*/
+            if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+                Update.printError(Serial);
+            }
         } else if (upload.status == UPLOAD_FILE_END) {
-        if (Update.end(true)) { //true to set the size to the current progress
-            Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
-        } else {
-            Update.printError(Serial);
-        }
+            if (Update.end(true)) { //true to set the size to the current progress
+                Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+                dispatch_evt_t outevt;
+                outevt.type = GUST_EVT_OTA_ENDED;
+                xQueueSend(core.evtq, &outevt, portMAX_DELAY);
+            } else {
+                Update.printError(Serial);
+            }
         }
     });
     server.begin();

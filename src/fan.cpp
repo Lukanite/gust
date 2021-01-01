@@ -18,7 +18,7 @@ void fanTask(void * pvParameter) {
     while (1) {
         dispatch_cmd_t curcmd;
         if (xQueueReceive(core.cmdq, &curcmd, portMAX_DELAY) == pdTRUE) {
-            if (curcmd.type == FAN_SET_PERCENT) {
+            if (curcmd.type == GUST_CMD_FAN_SET_PERCENT) {
                 uint32_t duty = (curcmd.data * (PWM_MAX - 1)) / 100;
                 ESP_LOGD(TAG, "Duty is now %u", duty);
                 ledcWrite(LEDC_CHANNEL, duty);

@@ -2,10 +2,11 @@
 #define M5F_COMMANDS_H
 
 typedef enum dispatch_cmd_type {
-    LEDS_SHOW_RAINBOW,
-    FAN_SET_PERCENT,
-    SCREEN_SHOW_HOME,
-    SCREEN_UPDATE_WIFI_IP
+    GUST_CMD_LEDS_SHOW_RAINBOW,
+    GUST_CMD_FAN_SET_PERCENT,
+    GUST_CMD_SCREEN_SHOW_HOME,
+    GUST_CMD_SCREEN_UPDATE_WIFI_IP,
+    GUST_CMD_SCREEN_SHOW_POWEROFF
 } dispatch_cmd_type_t;
 
 typedef struct dispatch_cmd {

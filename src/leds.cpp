@@ -9,7 +9,7 @@
 void ledsTask(void * pvParameter) {
     CRGB leds[NUM_LEDS];
     dispatch_pair_t core = *((dispatch_pair_t *) pvParameter);
-    dispatch_cmd_type_t curmode = LEDS_SHOW_RAINBOW;
+    dispatch_cmd_type_t curmode = GUST_CMD_LEDS_SHOW_RAINBOW;
     // put your setup code here, to run once:
     FastLED.addLeds<NEOPIXEL, PIN_LED>(leds, NUM_LEDS);
     while (1) {
@@ -18,7 +18,7 @@ void ledsTask(void * pvParameter) {
             curmode = curcmd.type;
         }
         else {
-            if (curmode == LEDS_SHOW_RAINBOW) {
+            if (curmode == GUST_CMD_LEDS_SHOW_RAINBOW) {
                 for (int i = 0; i < (255*4); i++) {
                     fill_rainbow(leds, NUM_LEDS, i%255, 255/NUM_LEDS);
                     FastLED.show();
