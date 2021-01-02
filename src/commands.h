@@ -6,7 +6,9 @@ typedef enum dispatch_cmd_type {
     GUST_CMD_FAN_SET_PERCENT,
     GUST_CMD_SCREEN_SHOW_HOME,
     GUST_CMD_SCREEN_UPDATE_WIFI_IP,
-    GUST_CMD_SCREEN_SHOW_POWEROFF
+    GUST_CMD_SCREEN_SHOW_POWEROFF,
+    GUST_CMD_SCREEN_SHOW_OTA,
+    GUST_CMD_SCREEN_UPDATE_OTA_PROGRESS
 } dispatch_cmd_type_t;
 
 typedef struct dispatch_cmd {

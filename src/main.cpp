@@ -97,14 +97,27 @@ void loop() {
       }
       else if (curevt.type == GUST_EVT_OTA_STARTED) {
         inota = true;
+        dispatch_cmd_t cmdb;
+        cmdb.type = GUST_CMD_SCREEN_SHOW_OTA;
+        cmdb.data = curevt.data;
+        xQueueSend(dispatchScreen.cmdq, &cmdb, portMAX_DELAY);
+      }
+      else if (curevt.type == GUST_EVT_OTA_PROGRESS) {
+        dispatch_cmd_t cmdb;
+        cmdb.type = GUST_CMD_SCREEN_UPDATE_OTA_PROGRESS;
+        cmdb.data = curevt.data;
+        xQueueSend(dispatchScreen.cmdq, &cmdb, portMAX_DELAY);
       }
       else if (curevt.type == GUST_EVT_OTA_ENDED) {
         inota = false;
       }
+
     } 
-    dispatch_cmd_t cmd;
-    cmd.type = GUST_CMD_SCREEN_SHOW_HOME;
-    cmd.data = curpwr;
-    xQueueSend(dispatchScreen.cmdq, &cmd, portMAX_DELAY);
+    if (!inota) {
+      dispatch_cmd_t cmd;
+      cmd.type = GUST_CMD_SCREEN_SHOW_HOME;
+      cmd.data = curpwr;
+      xQueueSend(dispatchScreen.cmdq, &cmd, portMAX_DELAY);
+    }
   }
 }

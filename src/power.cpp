@@ -10,7 +10,7 @@ void powerTask(void * pvParameter) {
     dispatch_pair_t core = *((dispatch_pair_t *) pvParameter);
     int poweroffchecks = 0;
     while (1) {
-        if (M5.Axp.GetVinVoltage() < 3) {
+        if (M5.Axp.GetVBusVoltage() < 3 && M5.Axp.GetVinVoltage() < 3) { //According to the datasheet, Bit 2 is 0 if discharging the battery
             poweroffchecks += 1;
         } 
         else {

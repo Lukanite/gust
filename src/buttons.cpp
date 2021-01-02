@@ -15,8 +15,8 @@ static int64_t lastButtonSpeedPressedTime;
 static void IRAM_ATTR buttonSpeedPressed() {
     BaseType_t xHigherPriorityTaskWoken, xResult;
     xHigherPriorityTaskWoken = pdFALSE;
-    xEventGroupSetBitsFromISR(buttonEvtBits, BUTTON_SPEED_BIT, &xHigherPriorityTaskWoken);
-    if( xResult != pdFAIL )
+    xResult = xEventGroupSetBitsFromISR(buttonEvtBits, BUTTON_SPEED_BIT, &xHigherPriorityTaskWoken);
+    if( xResult != pdFAIL && xHigherPriorityTaskWoken == pdTRUE)
     {
         /* If xHigherPriorityTaskWoken is now set to pdTRUE then a context
         switch should be requested.  The macro used is port specific and will
